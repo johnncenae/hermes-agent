@@ -7155,7 +7155,10 @@ class GatewayRunner:
             if config_path.exists():
                 with open(config_path, encoding="utf-8") as f:
                     user_config = yaml.safe_load(f) or {}
-            gate_enabled = user_config.get("display", {}).get("tool_progress_command", False)
+            gate_enabled = is_truthy_value(
+                user_config.get("display", {}).get("tool_progress_command"),
+                default=False,
+            )
         except Exception:
             gate_enabled = False
 
@@ -9593,7 +9596,10 @@ class GatewayRunner:
                             tool_progress_hint_gateway,
                         )
                         _cfg = _load_gateway_config()
-                        gate_on = bool(_cfg.get("display", {}).get("tool_progress_command", False))
+                        gate_on = is_truthy_value(
+                            _cfg.get("display", {}).get("tool_progress_command"),
+                            default=False,
+                        )
                         if gate_on and not is_seen(_cfg, TOOL_PROGRESS_FLAG):
                             long_tool_hint_fired[0] = True
                             progress_queue.put(tool_progress_hint_gateway())
